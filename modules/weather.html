@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Station Display</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        /* Custom styles for the 16:9 aspect ratio feel within a flexible container */
+        .weather-container {
+            width: 100%;
+            max-width: 1280px; /* Max width for a large screen */
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* rounded-3xl */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-xl */
+            padding: 1.5rem; /* p-6 */
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* gap-6 */
+            box-sizing: border-box;
+        }
+
+        @media (min-width: 1024px) { /* lg breakpoint */
+            .weather-container {
+                display: grid;
+                grid-template-columns: 2fr 1fr; /* Two columns: main weather and details */
+                grid-template-rows: auto auto; /* Two rows for content */
+                gap: 1.5rem; /* gap-6 */
+                max-height: 90vh; /* Limit height on large screens */
+            }
+            .main-weather {
+                grid-column: 1 / 2;
+                grid-row: 1 / 3;
+            }
+            .details-section {
+                grid-column: 2 / 3;
+                grid-row: 1 / 2;
+            }
+            .forecast-section {
+                grid-column: 2 / 3;
+                grid-row: 2 / 3;
+            }
+        }
+
+        /* Loading spinner styles */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="weatherApp" class="weather-container">
+        <div id="loading" class="flex flex-col items-center justify-center h-full text-gray-600">
+            <div class="loader"></div>
+            <p class="mt-4 text-lg">Loading weather data...</p>
+            <p class="text-sm text-center mt-2">
+                (Note: This app uses simulated data. For real data, you'd need a valid Weather Underground API key and endpoint.)
+            </p>
+        </div>
+
+        <div id="weatherContent" class="hidden">
+            <!-- Main Weather Display -->
+            <div class="main-weather bg-gradient-to-br from-blue-500 to-blue-700 text-white p-8 rounded-2xl shadow-lg flex flex-col justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2" id="stationName"></h2>
+                    <p class="text-lg mb-4" id="location"></p>
+                    <p class="text-6xl font-extrabold mb-2" id="currentTemp"></p>
+                    <p class="text-2xl" id="weatherCondition"></p>
+                </div>
+                <div class="mt-6 text-xl">
+                    <p><span class="font-semibold">Feels Like:</span> <span id="feelsLike"></span></p>
+                    <p><span class="font-semibold">Humidity:</span> <span id="humidity"></span></p>
+                    <p><span class="font-semibold">Wind:</span> <span id="wind"></span></p>
+                </div>
+            </div>
+
+            <!-- Detailed Data Section -->
+            <div class="details-section bg-gray-50 p-6 rounded-2xl shadow-md">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Station Details</h3>
+                <div class="grid grid-cols-2 gap-4 text-gray-700">
+                    <p><span class="font-medium">Pressure:</span> <span id="pressure"></span></p>
+                    <p><span class="font-medium">Dew Point:</span> <span id="dewPoint"></span></p>
+                    <p><span class="font-medium">Precipitation:</span> <span id="precipitation"></span></p>
+                    <p><span class="font-medium">Visibility:</span> <span id="visibility"></span></p>
+                    <p><span class="font-medium">UV Index:</span> <span id="uvIndex"></span></p>
+                    <p><span class="font-medium">Station ID:</span> <span id="stationId"></span></p>
+                </div>
+                <div class="mt-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Sun Times</h3>
+                    <p class="text-gray-700"><span class="font-medium">Sunrise:</span> <span id="sunrise"></span></p>
+                    <p class="text-gray-700"><span class="font-medium">Sunset:</span> <span id="sunset"></span></p>
+                </div>
+            </div>
+
+            <!-- 3-Hour Forecast Section -->
+            <div class="forecast-section bg-gray-50 p-6 rounded-2xl shadow-md">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Next 3 Hours Forecast</h3>
+                <div id="hourlyForecast" class="flex flex-col gap-4">
+                    <!-- Forecast items will be injected here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // IMPORTANT: Replace 'YOUR_API_KEY' with your actual Weather Underground API key.
+        // Also, the API endpoint and response structure below are simulated.
+        // You would need to consult the official Weather Underground API documentation
+        // for the correct endpoint and data format for your specific needs.
+        const API_KEY = 'YOUR_API_KEY';
+        const STATION_ID = 'KWASILVE121';
+
+        // Simulated API response data
+        const simulatedWeatherData = {
+            current_observation: {
+                station_id: STATION_ID,
+                observation_location: {
+                    full: "Silverdale, Washington",
+                    city: "Silverdale",
+                    state: "Washington",
+                    country: "US"
+                },
+                temp_f: 68.5,
+                feelslike_f: 69.2,
+                weather: "Partly Cloudy",
+                wind_mph: 5.8,
+                wind_dir: "NW",
+                pressure_in: 29.98,
+                dewpoint_f: 55.1,
+                precip_1hr_in: 0.00,
+                visibility_mi: 10.0,
+                uv: 7,
+                local_time_rfc822: "Tue, 22 Jul 2025 20:50:00 -0700"
+            },
+            forecast: {
+                hourly: [
+                    {
+                        FCTTIME: {
+                            hour: "21",
+                            hour_padded: "21",
+                            min: "00",
+                            pretty: "9:00 PM PDT on July 22, 2025"
+                        },
+                        temp: { english: "67", metric: "19" },
+                        condition: "Partly Cloudy",
+                        icon_url: "https://www.wunderground.com/static/images/conds/partlycloudy.gif",
+                        wind: { mph: 5, dir: "NW" },
+                        humidity: "70",
+                        pop: "0" // Probability of Precipitation
+                    },
+                    {
+                        FCTTIME: {
+                            hour: "22",
+                            hour_padded: "22",
+                            min: "00",
+                            pretty: "10:00 PM PDT on July 22, 2025"
+                        },
+                        temp: { english: "65", metric: "18" },
+                        condition: "Clear",
+                        icon_url: "https://www.wunderground.com/static/images/conds/clear.gif",
+                        wind: { mph: 4, dir: "NW" },
+                        humidity: "75",
+                        pop: "0"
+                    },
+                    {
+                        FCTTIME: {
+                            hour: "23",
+                            hour_padded: "23",
+                            min: "00",
+                            pretty: "11:00 PM PDT on July 22, 2025"
+                        },
+                        temp: { english: "62", metric: "17" },
+                        condition: "Clear",
+                        icon_url: "https://www.wunderground.com/static/images/conds/clear.gif",
+                        wind: { mph: 3, dir: "N" },
+                        humidity: "80",
+                        pop: "0"
+                    }
+                ],
+                simpleforecast: {
+                    forecastday: [
+                        {
+                            date: {
+                                sunrise: { hour: "5", minute: "30" },
+                                sunset: { hour: "20", minute: "55" }
+                            }
+                        }
+                    ]
+                }
+            }
+        };
+
+        const weatherAppDiv = document.getElementById('weatherApp');
+        const loadingDiv = document.getElementById('loading');
+        const weatherContentDiv = document.getElementById('weatherContent');
+
+        // Function to format time from HH:MM
+        function formatTime(hour, minute) {
+            const date = new Date();
+            date.setHours(parseInt(hour));
+            date.setMinutes(parseInt(minute));
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        async function fetchWeatherData() {
+            try {
+                // In a real application, you would construct the API URL like this:
+                // const apiUrl = `https://api.weather.com/v2/pws/observations/current?stationId=${STATION_ID}&format=json&units=e&apiKey=${API_KEY}`;
+                // const response = await fetch(apiUrl);
+                // if (!response.ok) {
+                //     throw new Error(`HTTP error! status: ${response.status}`);
+                // }
+                // const data = await response.json();
+
+                // For this demonstration, we use simulated data after a short delay
+                const data = await new Promise(resolve => setTimeout(() => resolve(simulatedWeatherData), 1500));
+
+                if (data && data.current_observation && data.forecast) {
+                    const current = data.current_observation;
+                    const forecast = data.forecast;
+
+                    // Update Main Weather Display
+                    document.getElementById('stationName').textContent = `${current.observation_location.city}, ${current.observation_location.state}`;
+                    document.getElementById('location').textContent = `Station ID: ${current.station_id}`;
+                    document.getElementById('currentTemp').textContent = `${Math.round(current.temp_f)}°F`;
+                    document.getElementById('weatherCondition').textContent = current.weather;
+                    document.getElementById('feelsLike').textContent = `${Math.round(current.feelslike_f)}°F`;
+                    document.getElementById('humidity').textContent = `${current.humidity || 'N/A'}%`; // Assuming humidity might be in current_observation or needs to be derived
+                    document.getElementById('wind').textContent = `${current.wind_mph} mph ${current.wind_dir}`;
+
+                    // Update Detailed Data Section
+                    document.getElementById('pressure').textContent = `${current.pressure_in} inHg`;
+                    document.getElementById('dewPoint').textContent = `${current.dewpoint_f}°F`;
+                    document.getElementById('precipitation').textContent = `${current.precip_1hr_in} in (last hr)`;
+                    document.getElementById('visibility').textContent = `${current.visibility_mi} mi`;
+                    document.getElementById('uvIndex').textContent = current.uv;
+                    document.getElementById('stationId').textContent = current.station_id;
+
+                    // Update Sun Times
+                    const sunriseHour = forecast.simpleforecast.forecastday[0].date.sunrise.hour;
+                    const sunriseMinute = forecast.simpleforecast.forecastday[0].date.sunrise.minute;
+                    const sunsetHour = forecast.simpleforecast.forecastday[0].date.sunset.hour;
+                    const sunsetMinute = forecast.simpleforecast.forecastday[0].date.sunset.minute;
+
+                    document.getElementById('sunrise').textContent = formatTime(sunriseHour, sunriseMinute);
+                    document.getElementById('sunset').textContent = formatTime(sunsetHour, sunsetMinute);
+
+                    // Update 3-Hour Forecast
+                    const hourlyForecastDiv = document.getElementById('hourlyForecast');
+                    hourlyForecastDiv.innerHTML = ''; // Clear previous content
+                    forecast.hourly.slice(0, 3).forEach(hourData => {
+                        const forecastItem = document.createElement('div');
+                        forecastItem.className = 'flex items-center justify-between bg-white p-4 rounded-xl shadow-sm';
+                        forecastItem.innerHTML = `
+                            <div class="flex items-center">
+                                <img src="${hourData.icon_url}" alt="${hourData.condition}" class="w-10 h-10 mr-3">
+                                <div>
+                                    <p class="font-semibold text-gray-900">${hourData.FCTTIME.pretty.split(' on ')[0]}</p>
+                                    <p class="text-sm text-gray-600">${hourData.condition}</p>
+                                </div>
+                            </div>
+                            <p class="text-lg font-bold text-gray-800">${Math.round(hourData.temp.english)}°F</p>
+                        `;
+                        hourlyForecastDiv.appendChild(forecastItem);
+                    });
+
+                    loadingDiv.classList.add('hidden');
+                    weatherContentDiv.classList.remove('hidden');
+                } else {
+                    console.error("Invalid data structure received from API:", data);
+                    loadingDiv.innerHTML = '<p class="text-red-600 text-center">Error: Could not load weather data. Please check the console for details.</p>';
+                }
+
+            } catch (error) {
+                console.error("Error fetching weather data:", error);
+                loadingDiv.innerHTML = `<p class="text-red-600 text-center">Error: ${error.message}. Please check your API key or network connection.</p>`;
+            }
+        }
+
+        // Fetch data when the page loads
+        window.onload = fetchWeatherData;
+    </script>
+</body>
+</html>
