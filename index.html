@@ -3,13 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flexbox 2x2 Quadrant Layout</title>
+    <title>Flexbox 2x2 Quadrant Layout with Live News</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Apply Inter font globally */
         body {
             font-family: 'Inter', sans-serif;
+        }
+        /* Ensure the iframe fills its parent container */
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%; /* Now explicitly set to 100% of parent height */
+            /* Removed padding-bottom to allow it to fill the entire quadrant */
+            overflow: hidden;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0; /* Remove default iframe border */
         }
     </style>
 </head>
@@ -20,37 +36,33 @@
     <div class="flex flex-wrap h-full w-full">
 
         <!-- Quadrant 1 (Top-Left) -->
-        <!-- Each quadrant takes 1/2 width (w-1/2) and 1/2 height (h-1/2) -->
-        <!-- Flex-grow ensures it expands to fill available space if needed -->
-        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-blue-500 text-white text-3xl font-bold p-4">
+        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-blue-500 text-white text-3xl font-bold p-4 rounded-tl-lg">
+            <!-- Content for Quadrant 1 -->
+            <p>Quadrant 1</p>
+        </div>
+
+        <!-- Quadrant 2 (Top-Right) - Now with CBS News Live Stream -->
+        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-gray-900 text-white text-3xl font-bold p-4 rounded-tr-lg overflow-hidden">
             <div class="video-container">
                 <!-- YouTube embed for CBS News 24/7 Live Stream -->
-                <!-- The 'autoplay=1' parameter attempts to start the video automatically -->
-                <!-- The 'modestbranding=1' parameter removes the YouTube logo from the control bar -->
-                <!-- The 'rel=0' parameter prevents related videos from showing at the end -->
+                <!-- Added '&mute=1' to ensure autoplay works reliably in most browsers -->
                 <iframe
-                    src="https://www.youtube.com/embed/jgHFz3Y6O64?autoplay=1&modestbranding=1&rel=0"
-                    allow="accelerometer; autoplay=1; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    src="https://www.youtube.com/embed/jgHFz3Y6O64?autoplay=1&modestbranding=1&rel=0&mute=1"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen
                     title="CBS News 24/7 Live Stream"
                 ></iframe>
             </div>
         </div>
 
-        <!-- Quadrant 2 (Top-Right) -->
-        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-green-500 text-white text-3xl font-bold p-4">
-            <!-- Content for Quadrant 2 -->
-            <p>Quadrant 2</p>
-        </div>
-
         <!-- Quadrant 3 (Bottom-Left) -->
-        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-yellow-500 text-white text-3xl font-bold p-4">
+        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-yellow-500 text-white text-3xl font-bold p-4 rounded-bl-lg">
             <!-- Content for Quadrant 3 -->
             <p>Quadrant 3</p>
         </div>
 
         <!-- Quadrant 4 (Bottom-Right) -->
-        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-red-500 text-white text-3xl font-bold p-4">
+        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-red-500 text-white text-3xl font-bold p-4 rounded-br-lg">
             <!-- Content for Quadrant 4 -->
             <p>Quadrant 4</p>
         </div>
