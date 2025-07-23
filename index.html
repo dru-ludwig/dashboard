@@ -3,71 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flexbox 2x2 Quadrant Layout with Live News</title>
-    <!-- Tailwind CSS CDN for easy styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Four Equal Quadrants</title>
     <style>
-        /* Apply Inter font globally */
         body {
-            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
         }
-        /* Ensure the iframe fills its parent container */
-        .video-container {
-            position: relative;
-            width: 100%;
-            height: 100%; /* Now explicitly set to 100% of parent height */
-            /* Removed padding-bottom to allow it to fill the entire quadrant */
-            overflow: hidden;
+
+        table {
+            width: 80vw; /* 80% of viewport width */
+            height: 80vh; /* 80% of viewport height */
+            border-collapse: collapse; /* Removes space between borders */
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0; /* Remove default iframe border */
+
+        td {
+            border: 1px solid #ccc; /* Light gray border for separation */
+            width: 50%; /* Each cell takes 50% of the table width */
+            height: 50%; /* Each cell takes 50% of the table height */
+            text-align: center;
+            vertical-align: middle;
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
         }
+
+        .quadrant-1 { background-color: #ffcccc; } /* Light red */
+        .quadrant-2 { background-color: #ccffcc; } /* Light green */
+        .quadrant-3 { background-color: #ccccff; } /* Light blue */
+        .quadrant-4 { background-color: #ffffcc; } /* Light yellow */
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex flex-col">
-    <!-- Main container for the 2x2 grid -->
-    <!-- Using flex-wrap to allow items to wrap to the next line -->
-    <!-- h-full and w-full ensure it takes full viewport height and width -->
-    <div class="flex flex-wrap h-full w-full">
+<body>
 
-        <!-- Quadrant 1 (Top-Left) -->
-        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-blue-500 text-white text-3xl font-bold p-4 rounded-tl-lg">
-            <!-- Content for Quadrant 1 -->
-            <p>TBD</p>
-        </div>
+    <table>
+        <tr>
+            <td class="quadrant-1">Quadrant 1</td>
+            <td class="quadrant-2">Quadrant 2</td>
+        </tr>
+        <tr>
+            <td class="quadrant-3">Quadrant 3</td>
+            <td class="quadrant-4">Quadrant 4</td>
+        </tr>
+    </table>
 
-        <!-- Quadrant 2 (Top-Right) - Now with CBS News Live Stream -->
-        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-gray-900 text-white text-3xl font-bold rounded-tr-lg overflow-hidden">
-            <div class="video-container">
-                <!-- YouTube embed for CBS News 24/7 Live Stream -->
-                <!-- Added '&mute=1' to ensure autoplay works reliably in most browsers -->
-                <iframe
-                    src="https://www.youtube.com/embed/jgHFz3Y6O64?autoplay=1&modestbranding=1&rel=0&mute=1"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                    title="CBS News 24/7 Live Stream"
-                ></iframe>
-            </div>
-        </div>
-
-        <!-- Quadrant 3 (Bottom-Left) -->
-        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-yellow-500 text-white text-3xl font-bold p-4 rounded-bl-lg">
-            <!-- Content for Quadrant 3 -->
-            <p>TBD</p>
-        </div>
-
-
-
-        <!-- Quadrant 4 (Bottom-Right) -->
-        <div class="flex items-center justify-center w-full h-full">
-            <iframe src="https://www.wunderground.com/dashboard/pws/KWASILVE121"></iframe>
-        </div>
-
-    </div>
 </body>
 </html>
