@@ -23,8 +23,18 @@
         <!-- Each quadrant takes 1/2 width (w-1/2) and 1/2 height (h-1/2) -->
         <!-- Flex-grow ensures it expands to fill available space if needed -->
         <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-blue-500 text-white text-3xl font-bold p-4">
-            <!-- Content for Quadrant 1 -->
-            <p>Quadrant 1</p>
+            <div class="video-container">
+                <!-- YouTube embed for CBS News 24/7 Live Stream -->
+                <!-- The 'autoplay=1' parameter attempts to start the video automatically -->
+                <!-- The 'modestbranding=1' parameter removes the YouTube logo from the control bar -->
+                <!-- The 'rel=0' parameter prevents related videos from showing at the end -->
+                <iframe
+                    src="https://www.youtube.com/embed/jgHFz3Y6O64?autoplay=1&modestbranding=1&rel=0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    title="CBS News 24/7 Live Stream"
+                ></iframe>
+            </div>
         </div>
 
         <!-- Quadrant 2 (Top-Right) -->
