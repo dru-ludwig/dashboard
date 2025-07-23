@@ -1,12 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexbox 2x2 Quadrant Layout</title>
+    <!-- Tailwind CSS CDN for easy styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Apply Inter font globally */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col">
+    <!-- Main container for the 2x2 grid -->
+    <!-- Using flex-wrap to allow items to wrap to the next line -->
+    <!-- h-full and w-full ensure it takes full viewport height and width -->
+    <div class="flex flex-wrap h-full w-full">
 
-<body>
+        <!-- Quadrant 1 (Top-Left) -->
+        <!-- Each quadrant takes 1/2 width (w-1/2) and 1/2 height (h-1/2) -->
+        <!-- Flex-grow ensures it expands to fill available space if needed -->
+        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-blue-500 text-white text-3xl font-bold p-4 rounded-tl-lg">
+            <!-- Content for Quadrant 1 -->
+            <p>Quadrant 1</p>
+        </div>
 
-<h1>Hello World.</h1>
+        <!-- Quadrant 2 (Top-Right) -->
+        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-green-500 text-white text-3xl font-bold p-4 rounded-tr-lg">
+            <!-- Content for Quadrant 2 -->
+            <p>Quadrant 2</p>
+        </div>
 
-<p>My first paragraph.</p>
+        <!-- Quadrant 3 (Bottom-Left) -->
+        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-yellow-500 text-white text-3xl font-bold p-4 rounded-bl-lg">
+            <!-- Content for Quadrant 3 -->
+            <p>Quadrant 3</p>
+        </div>
 
+        <!-- Quadrant 4 (Bottom-Right) -->
+        <div class="flex items-center justify-center w-full h-1/2 md:w-1/2 md:h-1/2 bg-red-500 text-white text-3xl font-bold p-4 rounded-br-lg">
+            <!-- Content for Quadrant 4 -->
+            <p>Quadrant 4</p>
+        </div>
+
+    </div>
 </body>
-
 </html>
